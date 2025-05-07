@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daftar siswa kelas 6</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --secondary: #f9f9f9;
+      --accent: #ffffff;
+      --text-dark: #333;
+      --text-light: #fff;
+      --edit: #FFC107;
+      --delete: #F44336;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--secondary);
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: auto;
+      background: var(--accent);
+      padding: 24px;
+      margin-top: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: space-between;
+    }
+
+    input {
+      flex: 1 1 200px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    form button {
+      padding: 10px 24px;
+      background-color: var(--primary);
+      color: var(--text-light);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #388e3c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    td:last-child {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .action-btn {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .edit-btn {
+      background-color: var(--edit);
+    }
+
+    .delete-btn {
+      background-color: var(--delete);
+    }
+
+    @media (max-width: 600px) {
+      form {
+        flex-direction: column;
+      }
+
+      input {
+        flex: 1 1 100%;
+      }
+
+      table, th, td {
+        font-size: 12px;
+      }
+
+      td:last-child {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Data Siswa Kelas 6</h1>
+
+    <form id="siswaForm">
+      <input type="text" id="nama" placeholder="Nama" required />
+      <input type="number" id="absen" placeholder="Absen" style="max-width: 80px;" required />
+      <input type="text" id="ttl" placeholder="Tempat, Tanggal Lahir" style="flex: 2;" required />
+      <input type="text" id="wa" placeholder="No WhatsApp" required />
+      <button type="submit">Tambah</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Absen</th>
+          <th>TTL</th>
+          <th>No WA</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelSiswa"></tbody>
+    </table>
+  </div>
+
+  <script>
+    let editRow = null;
+
+    const form = document.getElementById('siswaForm');
+    const namaInput = document.getElementById('nama');
+    const absenInput = document.getElementById('absen');
+    const ttlInput = document.getElementById('ttl');
+    const waInput = document.getElementById('wa');
+    const tabel = document.getElementById('tabelSiswa');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      if (editRow) {
+        editRow.cells[0].innerText = namaInput.value;
+        editRow.cells[1].innerText = absenInput.value;
+        editRow.cells[2].innerText = ttlInput.value;
+        editRow.cells[3].innerText = waInput.value;
+        editRow = null;
+        form.querySelector('button').textContent = 'Tambah';
+      } else {
+        const row = tabel.insertRow();
+        row.innerHTML = `
+          <td>${namaInput.value}</td>
+          <td>${absenInput.value}</td>
+          <td>${ttlInput.value}</td>
+          <td>${waInput.value}</td>
+          <td>
+            <button class="action-btn edit-btn">Edit</button>
+            <button class="action-btn delete-btn">Hapus</button>
+          </td>
+        `;
+      }
+
+      form.reset();
+    });
+
+    tabel.addEventListener('click', function(e) {
+      const target = e.target;
+      const row = target.closest('tr');
+      if (target.classList.contains('edit-btn')) {
+        namaInput.value = row.cells[0].innerText;
+        absenInput.value = row.cells[1].innerText;
+        ttlInput.value = row.cells[2].innerText;
+        waInput.value = row.cells[3].innerText;
+        editRow = row;
+        form.querySelector('button').textContent = 'Simpan';
+      } else if (target.classList.contains('delete-btn')) {
+        tabel.deleteRow(row.rowIndex - 1);
+      }
+    });
+  </script>
+</body>
+</html>
